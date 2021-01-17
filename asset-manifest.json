@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/static/css/main.6dea0f05.chunk.css",
-    "main.js": "/static/js/main.808cc36c.chunk.js",
-    "main.js.map": "/static/js/main.808cc36c.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.2c59b2a6.js",
-    "runtime-main.js.map": "/static/js/runtime-main.2c59b2a6.js.map",
-    "static/js/2.3034b08d.chunk.js": "/static/js/2.3034b08d.chunk.js",
-    "static/js/2.3034b08d.chunk.js.map": "/static/js/2.3034b08d.chunk.js.map",
-    "static/js/3.0ff8654e.chunk.js": "/static/js/3.0ff8654e.chunk.js",
-    "static/js/3.0ff8654e.chunk.js.map": "/static/js/3.0ff8654e.chunk.js.map",
-    "index.html": "/index.html",
-    "static/css/main.6dea0f05.chunk.css.map": "/static/css/main.6dea0f05.chunk.css.map",
-    "static/js/2.3034b08d.chunk.js.LICENSE.txt": "/static/js/2.3034b08d.chunk.js.LICENSE.txt"
+    "main.css": "/shopify-challenge/static/css/main.6dea0f05.chunk.css",
+    "main.js": "/shopify-challenge/static/js/main.808cc36c.chunk.js",
+    "main.js.map": "/shopify-challenge/static/js/main.808cc36c.chunk.js.map",
+    "runtime-main.js": "/shopify-challenge/static/js/runtime-main.cf12dd49.js",
+    "runtime-main.js.map": "/shopify-challenge/static/js/runtime-main.cf12dd49.js.map",
+    "static/js/2.3034b08d.chunk.js": "/shopify-challenge/static/js/2.3034b08d.chunk.js",
+    "static/js/2.3034b08d.chunk.js.map": "/shopify-challenge/static/js/2.3034b08d.chunk.js.map",
+    "static/js/3.0ff8654e.chunk.js": "/shopify-challenge/static/js/3.0ff8654e.chunk.js",
+    "static/js/3.0ff8654e.chunk.js.map": "/shopify-challenge/static/js/3.0ff8654e.chunk.js.map",
+    "index.html": "/shopify-challenge/index.html",
+    "static/css/main.6dea0f05.chunk.css.map": "/shopify-challenge/static/css/main.6dea0f05.chunk.css.map",
+    "static/js/2.3034b08d.chunk.js.LICENSE.txt": "/shopify-challenge/static/js/2.3034b08d.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.2c59b2a6.js",
+    "static/js/runtime-main.cf12dd49.js",
     "static/js/2.3034b08d.chunk.js",
     "static/css/main.6dea0f05.chunk.css",
     "static/js/main.808cc36c.chunk.js"
