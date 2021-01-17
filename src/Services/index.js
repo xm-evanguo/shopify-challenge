@@ -1,11 +1,9 @@
-
 export const getMovieInfo = async (movieTitle) => {
-    try{
+    try {
         const rawRespond = await fetch(`http://www.omdbapi.com/?apikey=5f098a0e&s=${movieTitle}&type=movie`);
         const respond = await rawRespond.json();
         return respond.Search;
-    }catch(error){
-        console.log("Error in services")
+    } catch (error) {
+        console.log('Error in services');
     }
-
-}
+};

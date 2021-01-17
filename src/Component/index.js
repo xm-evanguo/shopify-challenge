@@ -1,2 +1,2 @@
-export * from './SearchBar'
-export * from './MovieList'
+export * from './SearchBar';
+export * from './MovieList';
