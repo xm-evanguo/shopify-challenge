@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { SearchBar, MovieList } from './Component'
 import { getMovieInfo } from './Services'
+import { Paper } from '@material-ui/core';
 
 export const App = () => {
 	const [searchList, setSearchList] = useState([]);
 	const [selectedList, setSelectedList] = useState([]);
-	const [displaySelectedList, setDisplaySelectedList] = useState([]);
 	const [searchListPage, setSearchListPage] = useState(0);
-	const [selectedListPage, setSelectedListPage] = useState(0);
 	const [movieTitle, setMovieTitle] = useState('');
 	const [nextSearchDisable, setNextSearchDisable] = useState(true);
 	const classes = useStyles();
@@ -38,12 +37,14 @@ export const App = () => {
 	}
 
 	const addToSelectedList = (addMovie) => {
+		if(selectedList.length >= 5){
+			return
+		}
 		const index = searchList.findIndex((movie) => movie.id === addMovie.id);
 		searchList[index].selected = true;
 		const newSelectedList = [...selectedList, addMovie];
 		setSearchList(searchList);
 		setSelectedList(newSelectedList);
-		setDisplaySelectedList(newSelectedList.slice(10*selectedListPage, 10*selectedListPage+10));
 	}
 
 	const removeFromSelectedList = (removeMovie) => {
@@ -54,7 +55,6 @@ export const App = () => {
 			searchList[index].selected = false;
 		}
 		setSelectedList(newSelectedList);
-		setDisplaySelectedList(newSelectedList.slice(10*selectedListPage, 10*selectedListPage+10));
 	}
 
 	const getNextSearchPage = () => {
@@ -69,57 +69,72 @@ export const App = () => {
 		setSearchListPage(page);
 	}
 
-	const getNextSelectedPage = () => {
-		const page = selectedListPage + 1;
-		setDisplaySelectedList(selectedList.slice(10*page, 10*page+10));
-		setSelectedListPage(page);
-	}
-
-	const getLastSelectedPage = () => {
-		const page = selectedListPage - 1;
-		setDisplaySelectedList(selectedList.slice(10*page, 10*page+10));
-		setSelectedListPage(page);
-	}
-
 	const updateMovieTitle = async (title) => {
+		if(!title || title.length === 0){
+			return;
+		}
 		setMovieTitle(title);
 		await searchMovie(title, 0);
 	}
 
 	return (
-		<div className={classes.center}>
-			<SearchBar onSearchClick={updateMovieTitle}/>
-			<div className={classes.container}>
-				<MovieList
-					mode={'search'}
-					data={searchList}
-					className={classes.searchList}
-					rowBtn={addToSelectedList}
-					nextPageBtn={getNextSearchPage}
-					nextPageBtnDisable={nextSearchDisable}
-					lastPageBtn={getLastSearchPage}
-					lastPageBtnDisable={searchListPage === 0}
-				/>
-				<MovieList
-					mode={'selected'}
-					data={displaySelectedList}
-					rowBtn={removeFromSelectedList}
-					nextPageBtn={getNextSelectedPage}
-					nextPageBtnDisable={selectedListPage*10+displaySelectedList.length >= selectedList.length}
-					lastPageBtn={getLastSelectedPage}
-					lastPageBtnDisable={selectedListPage === 0}
-				/>
-			</div>
+		<div className={classes.background}>
+			<Paper className={classes.center}>
+				<h2>Movie Awards for Entrepreneurs</h2>
+				<SearchBar onSearchClick={updateMovieTitle}/>
+				{
+					selectedList.length > 4 && <Paper className={classes.banner}>
+						<p className={classes.bannerText}>You have nominated 5 movies</p>
+					</Paper>
+				}
+				<div className={classes.container}>
+					<MovieList
+						mode={'search'}
+						data={searchList}
+						className={classes.searchList}
+						rowBtn={addToSelectedList}
+						nextPageBtn={getNextSearchPage}
+						nextPageBtnDisable={nextSearchDisable}
+						lastPageBtn={getLastSearchPage}
+						lastPageBtnDisable={searchListPage === 0}
+						disableAllRowBtn={selectedList.length >= 5}
+					/>
+					<MovieList
+						mode={'selected'}
+						data={selectedList}
+						rowBtn={removeFromSelectedList}
+						lastPageBtnDisable={true}
+						nextPageBtnDisable={true}
+					/>
+				</div>
+			</Paper>
 		</div>
+
 	);
 }
 
 const useStyles = makeStyles((theme) => ({
+	background: {
+		width: '100%',
+		height: '100vh',
+		backgroundColor: '#f5f5f5'
+	},
+	banner: {
+		padding: 1,
+		marginBottom: 10,
+		backgroundColor: '#f75563',
+	},
+	bannerText: {
+		color: '#ffffff',
+		textAlign: 'center',
+		verticalAlign: 'middle'
+	},
 	center: {
 		position: 'absolute',
 		top: '50%',
 		left: '50%',
-		transform: 'translate(-50%, -50%)'
+		transform: 'translate(-50%, -50%)',
+		padding: 50
 	},
 	container: {
 		display: 'flex',

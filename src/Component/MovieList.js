@@ -2,20 +2,20 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { List, Button, ListItem, Paper } from '@material-ui/core';
 
-export const MovieList = ({ data, rowBtn, mode, nextPageBtn, lastPageBtn, lastPageBtnDisable, nextPageBtnDisable }) => {
+export const MovieList = ({ data, rowBtn, mode, nextPageBtn, lastPageBtn, lastPageBtnDisable, nextPageBtnDisable, disableAllRowBtn }) => {
     const classes = useStyles();
 
     const renderRow = (movie) => {
         return (
-            <ListItem className={classes.row}>
+            <ListItem className={classes.row} key={movie.id}>
                 <h10 className={classes.text}>{`${movie.title} (${movie.year})`}</h10>
                 <Button
                     variant="outlined"
                     color="primary"
                     onClick={() => rowBtn(movie)}
-                    disabled={mode === 'search' ? movie.selected : false}
+                    disabled={disableAllRowBtn ? true : mode === 'search' ? movie.selected : false}
                     className={classes.btn}>
-                    {mode === 'search' ? 'Nominations' : 'Remove'}
+                    {mode === 'search' ? 'Nominate' : 'Remove'}
                 </Button>
             </ListItem>
         );
