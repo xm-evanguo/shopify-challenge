@@ -6,14 +6,26 @@ import { getMovieInfo } from './Services'
 export const App = () => {
 	const [searchList, setSearchList] = useState([]);
 	const [selectedList, setSelectedList] = useState([]);
+	const [displaySelectedList, setDisplaySelectedList] = useState([]);
+	const [searchListPage, setSearchListPage] = useState(0);
+	const [selectedListPage, setSelectedListPage] = useState(0);
+	const [movieTitle, setMovieTitle] = useState('');
+	const [nextSearchDisable, setNextSearchDisable] = useState(true);
 	const classes = useStyles();
 
-	const searchMovie = async (movieTitle) => {
-		const data = await getMovieInfo(movieTitle);
+	const searchMovie = async (title, page) => {
+		const data = await getMovieInfo(title, page);
 		if(!data || data.length === 0){
 			setSearchList([]);
 			return
 		}
+		if(page < 99){
+			const nextPageData = await getMovieInfo(title, page+1);
+			setNextSearchDisable(!nextPageData || nextPageData.length === 0)
+		}else{
+			setNextSearchDisable(true)
+		}
+
 		const searchList = data.map((movie) => (
 			{
 				id: movie.imdbID,
@@ -31,6 +43,7 @@ export const App = () => {
 		const newSelectedList = [...selectedList, addMovie];
 		setSearchList(searchList);
 		setSelectedList(newSelectedList);
+		setDisplaySelectedList(newSelectedList.slice(10*selectedListPage, 10*selectedListPage+10));
 	}
 
 	const removeFromSelectedList = (removeMovie) => {
@@ -40,15 +53,62 @@ export const App = () => {
 		if(index !== -1){
 			searchList[index].selected = false;
 		}
-		setSelectedList(newSelectedList)
+		setSelectedList(newSelectedList);
+		setDisplaySelectedList(newSelectedList.slice(10*selectedListPage, 10*selectedListPage+10));
+	}
+
+	const getNextSearchPage = () => {
+		const page = searchListPage + 1;
+		searchMovie(movieTitle, page);
+		setSearchListPage(page);
+	}
+
+	const getLastSearchPage = () => {
+		const page = searchListPage - 1;
+		searchMovie(movieTitle, page);
+		setSearchListPage(page);
+	}
+
+	const getNextSelectedPage = () => {
+		const page = selectedListPage + 1;
+		setDisplaySelectedList(selectedList.slice(10*page, 10*page+10));
+		setSelectedListPage(page);
+	}
+
+	const getLastSelectedPage = () => {
+		const page = selectedListPage - 1;
+		setDisplaySelectedList(selectedList.slice(10*page, 10*page+10));
+		setSelectedListPage(page);
+	}
+
+	const updateMovieTitle = async (title) => {
+		setMovieTitle(title);
+		await searchMovie(title, 0);
 	}
 
 	return (
 		<div className={classes.center}>
-			<SearchBar onSearchClick={searchMovie}/>
+			<SearchBar onSearchClick={updateMovieTitle}/>
 			<div className={classes.container}>
-				<MovieList mode={'search'} className={classes.searchList} data={searchList} btnOnPress={addToSelectedList} />
-				<MovieList mode={'selected'} data={selectedList} btnOnPress={removeFromSelectedList} />
+				<MovieList
+					mode={'search'}
+					data={searchList}
+					className={classes.searchList}
+					rowBtn={addToSelectedList}
+					nextPageBtn={getNextSearchPage}
+					nextPageBtnDisable={nextSearchDisable}
+					lastPageBtn={getLastSearchPage}
+					lastPageBtnDisable={searchListPage === 0}
+				/>
+				<MovieList
+					mode={'selected'}
+					data={displaySelectedList}
+					rowBtn={removeFromSelectedList}
+					nextPageBtn={getNextSelectedPage}
+					nextPageBtnDisable={selectedListPage*10+displaySelectedList.length >= selectedList.length}
+					lastPageBtn={getLastSelectedPage}
+					lastPageBtnDisable={selectedListPage === 0}
+				/>
 			</div>
 		</div>
 	);
