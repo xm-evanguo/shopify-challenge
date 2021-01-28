@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { SearchBar, MovieList } from './Component'
-import { getMovieInfo } from './Services'
+import { getMovieInfoByTitle, getMovieInfoById } from './Services'
 import { Paper } from '@material-ui/core';
+import queryString from 'query-string';
+import { useLocation } from "react-router-dom";
 
 export const App = () => {
 	const [searchList, setSearchList] = useState([]);
@@ -12,14 +14,26 @@ export const App = () => {
 	const [nextSearchDisable, setNextSearchDisable] = useState(true);
 	const classes = useStyles();
 
+	const getMovieById = (idObject) => {
+		var list = [];
+		console.log(idObject);
+		setSelectedList(list);
+	}	
+const location = useLocation();
+	const UrlQueryStrings = location.search;
+	const { id } = queryString.parse(UrlQueryStrings);
+	console.log(id, 'id?')
+	if(id){
+		getMovieById(id);
+	}
 	const searchMovie = async (title, page) => {
-		const data = await getMovieInfo(title, page);
+		const data = await getMovieInfoByTitle(title, page);
 		if(!data || data.length === 0){
 			setSearchList([]);
 			return
 		}
 		if(page < 99){
-			const nextPageData = await getMovieInfo(title, page+1);
+			const nextPageData = await getMovieInfoByTitle(title, page+1);
 			setNextSearchDisable(!nextPageData || nextPageData.length === 0)
 		}else{
 			setNextSearchDisable(true)
@@ -109,7 +123,6 @@ export const App = () => {
 				</div>
 			</Paper>
 		</div>
-
 	);
 }
 
