@@ -30,9 +30,9 @@ class App extends React.Component {
         if (id) {
             var list = [];
             var movieIdList = [];
-            if(typeof id === 'string'){
+            if (typeof id === 'string') {
                 movieIdList = [id];
-            }else{
+            } else {
                 movieIdList = id;
             }
             try {
