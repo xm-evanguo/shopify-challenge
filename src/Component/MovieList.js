@@ -22,31 +22,32 @@ export const MovieList = ({ data, rowBtn, mode, nextPageBtn, lastPageBtn, lastPa
     };
 
     return (
-        <>
-            {data && data.length !== 0 && (
-                <Paper component="div" className={classes.root}>
-                    <List>{data.map((movie) => renderRow(movie))}</List>
-                    {(!lastPageBtnDisable || !nextPageBtnDisable) && (
-                        <>
-                            <Button variant="outlined" color="primary" onClick={lastPageBtn} disabled={lastPageBtnDisable} className={classes.pageBtn}>
-                                {'Last'}
-                            </Button>
-                            <Button variant="outlined" color="primary" onClick={nextPageBtn} disabled={nextPageBtnDisable} className={classes.pageBtn}>
-                                {'Next'}
-                            </Button>
-                        </>
-                    )}
-                </Paper>
+        <Paper component="div" className={classes.root}>
+            <h4 className={classes.title}>{mode === 'search' ? 'Search Result' : 'Nominated'}</h4>
+            <List>{data.map((movie) => renderRow(movie))}</List>
+            {(!lastPageBtnDisable || !nextPageBtnDisable) && (
+                <>
+                    <Button variant="outlined" color="primary" onClick={lastPageBtn} disabled={lastPageBtnDisable} className={classes.pageBtn}>
+                        {'Last'}
+                    </Button>
+                    <Button variant="outlined" color="primary" onClick={nextPageBtn} disabled={nextPageBtnDisable} className={classes.pageBtn}>
+                        {'Next'}
+                    </Button>
+                </>
             )}
-        </>
+        </Paper>
     );
 };
 
 const useStyles = makeStyles((theme) => ({
     root: {
         paddingBottom: 10,
-        paddingLeft: 5,
         paddingRight: 5,
+        marginBottom: 10,
+        width: 400,
+    },
+    title: {
+        marginLeft: 16,
     },
     row: {
         display: 'flex',

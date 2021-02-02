@@ -1,9 +1,13 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import { Button, TextField, Modal } from '@material-ui/core';
 import { SearchBar, MovieList } from './Component';
 import { getMovieInfoByTitle, getMovieInfoById } from './Services';
 import { Paper } from '@material-ui/core';
 import queryString from 'query-string';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 class App extends React.Component {
     constructor(props) {
@@ -15,6 +19,8 @@ class App extends React.Component {
             searchListPage: 0,
             movieTitle: '',
             nextSearchDisable: true,
+            modalVisible: false,
+            shareLink: '',
         };
     }
 
@@ -36,8 +42,8 @@ class App extends React.Component {
                         return movieObject;
                     })
                 );
-                list = list.filter((value, index, self) => {
-                    return value.id ? self.indexOf(value) === index : false;
+                list = list.filter((curMovie, index, self) => {
+                    return curMovie.id ? index === self.findIndex((tmpMovie) => tmpMovie.id === curMovie.id) : false;
                 });
                 this.setState({ selectedList: list.slice(0, 5), loading: false });
             } catch (error) {
@@ -53,6 +59,7 @@ class App extends React.Component {
             const data = await getMovieInfoByTitle(title, page);
             if (!data || data.length === 0) {
                 this.setState({ searchList: [] });
+                this.noMovieFound();
                 return;
             }
             if (page < 99) {
@@ -122,8 +129,49 @@ class App extends React.Component {
         }
     };
 
+    shareLink = () => {
+        const { selectedList } = this.state;
+        var url = 'https://xm-evanguo.github.io/shopify-challenge/?';
+        selectedList.forEach((movie, index) => {
+            if (index === 0) {
+                url = url + `id=${movie.id}`;
+            } else {
+                url = url + `&id=${movie.id}`;
+            }
+        });
+        this.setState({ modalVisible: true, shareLink: url });
+    };
+
+    onModalClose = () => {
+        this.setState({ modalVisible: false });
+    };
+
+    afterCopyClick = () => {
+        toast.success('Successfully copy to clipboard', {
+            position: 'top-center',
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    };
+
+    noMovieFound = () => {
+        toast.error(`No movie found`, {
+            position: 'top-center',
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+    };
+
     render = () => {
-        const { searchList, nextSearchDisable, searchListPage, selectedList } = this.state;
+        const { searchList, nextSearchDisable, searchListPage, selectedList, modalVisible, shareLink } = this.state;
         const { classes } = this.props;
 
         return (
@@ -156,7 +204,33 @@ class App extends React.Component {
                             nextPageBtnDisable={true}
                         />
                     </div>
+                    {selectedList.length !== 0 && (
+                        <Button variant="outlined" color="primary" onClick={this.shareLink} className={classes.pageBtn}>
+                            {'Create share link'}
+                        </Button>
+                    )}
                 </Paper>
+                <Modal open={modalVisible} onClose={this.onModalClose}>
+                    <Paper className={[classes.shareLinkContainer, classes.center]}>
+                        <TextField disabled multiline label="Share Link" defaultValue={shareLink} className={classes.link} />
+                        <CopyToClipboard text={shareLink} onCopy={this.afterCopyClick}>
+                            <Button variant="outlined" color="primary" onClick={this.shareLink} className={classes.pageBtn}>
+                                {'Copy'}
+                            </Button>
+                        </CopyToClipboard>
+                    </Paper>
+                </Modal>
+                <ToastContainer
+                    position="top-center"
+                    autoClose={2000}
+                    hideProgressBar
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss={false}
+                    draggable
+                    pauseOnHover
+                />
             </div>
         );
     };
@@ -193,5 +267,18 @@ export default withStyles((theme) => ({
     },
     searchList: {
         marginRight: 10,
+    },
+    shareLinkContainer: {
+        minHeight: 50,
+        width: '50%',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    link: {
+        width: '100%',
+    },
+    pageBtn: {
+        marginLeft: 5,
     },
 }))(App);
