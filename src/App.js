@@ -13,7 +13,6 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading: true,
             searchList: [],
             selectedList: [],
             searchListPage: 0,
@@ -30,10 +29,15 @@ class App extends React.Component {
         const { id } = queryString.parse(UrlQueryStrings);
         if (id) {
             var list = [];
-            console.log(id, location, 'id and location')
+            var movieIdList = [];
+            if(typeof id === 'string'){
+                movieIdList = [id];
+            }else{
+                movieIdList = id;
+            }
             try {
                 list = await Promise.all(
-                    id.map(async (movieId) => {
+                    movieIdList.map(async (movieId) => {
                         const movie = await getMovieInfoById(movieId);
                         const movieObject = {
                             id: movie.imdbID,
@@ -46,10 +50,9 @@ class App extends React.Component {
                 list = list.filter((curMovie, index, self) => {
                     return curMovie.id ? index === self.findIndex((tmpMovie) => tmpMovie.id === curMovie.id) : false;
                 });
-                this.setState({ selectedList: list.slice(0, 5), loading: false });
+                this.setState({ selectedList: list.slice(0, 5) });
             } catch (error) {
                 console.log('error in componentDidMount', error);
-                this.setState({ loading: false });
             }
         }
     };
