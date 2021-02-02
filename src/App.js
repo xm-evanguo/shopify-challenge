@@ -30,6 +30,7 @@ class App extends React.Component {
         const { id } = queryString.parse(UrlQueryStrings);
         if (id) {
             var list = [];
+            console.log(id, location, 'id and location')
             try {
                 list = await Promise.all(
                     id.map(async (movieId) => {
